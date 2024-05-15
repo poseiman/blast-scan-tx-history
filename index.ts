@@ -1,29 +1,18 @@
-import axios from "axios";
 import { ethers } from "ethers";
 
-import { BLASTSCAN_API_ENDPOINT, USDB, API_KEY, provider } from "./config"
-
-/**
- * @description Config blast scan endpoint for fetching data
- * 
- * @param {string} address The address to fetch tx.
- * @param {number} count The number of tx needed.
- * @param {string} apiKey The api key of blast scan.
- * 
- * @returns {string} The blast scan endpoint which will be used to fetch data.
- */
-const blastScanEndpoint = (address: string, count: number, apiKey: string): string => `${BLASTSCAN_API_ENDPOINT}?module=logs&action=getLogs&toBlock=latest&address=${address}&page=1&offset=${count}&apikey=${apiKey}`
+import {  USDB, provider } from "./config"
 
 /**
  * @description Decode tx hash to get information
  * 
+ * @param {number} num The hash which is should be decoded.
  * @param {string} hash The hash which is should be decoded.
  */
-const decodeTx = async (hash: string) => {
+const decodeTx = async (num: number, hash: string) => {
     const info = await provider.getTransaction(hash)
     const address = info?.from
     const balance = await provider.getBalance(address!)
-    console.log(new Date(), address, '->', ethers.formatEther(balance))
+    console.log(num, ':', address, '->', ethers.formatEther(balance))
 }
 
 /**
@@ -36,12 +25,13 @@ const decodeTx = async (hash: string) => {
  * @param {number} delay The time to delay while iterating to void api access limit
  */
 const fetchTransactionHistory = async (address: string, count: number, delay: number) => {
-    const fetchURL = blastScanEndpoint(address, count, API_KEY)
-    const result = (await axios.get(fetchURL)).data.result
-    for (let i = 0; i < result.length; i++) {
+    const blochNumber = await provider.getBlockNumber()
+    const filter = { fromBlock: blochNumber - 100, toBlock: 'latest', address }
+    const result = await provider.getLogs(filter)
+    for (let i = result.length - 1; i >= result.length - count; i--) {
         await new Promise(resolve => setTimeout(resolve, delay));
-        decodeTx(result[i].transactionHash)
+        decodeTx(result.length - i, result[i].transactionHash)
     }
 };
 
-fetchTransactionHistory(USDB, 100, 100)
+fetchTransactionHistory(USDB, 100, 200)

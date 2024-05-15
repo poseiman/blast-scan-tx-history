@@ -14,6 +14,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@bwarelabs/blast-sdk-js": "^1.0.17",
     "abi-decoder": "^2.4.0",
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
