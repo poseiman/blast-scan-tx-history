@@ -34,4 +34,4 @@ const fetchTransactionHistory = async (address: string, count: number, delay: nu
     }
 };
 
-fetchTransactionHistory(USDB, 100, 200)
+fetchTransactionHistory(USDB, 1000, 200)
