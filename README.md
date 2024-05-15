@@ -52,14 +52,6 @@ This TypeScript project utilizes Ether.js to fetch transactions interacting with
    yarn start
    ```
 3. The application will fetch transactions and display the balance of the specified address.
-4. Build the application:
-   ```
-   npm build
-   ```
-   or
-   ```
-   yarn build
-   ```
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
